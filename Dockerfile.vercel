@@ -19,9 +19,17 @@ RUN composer install \
     --optimize-autoloader \
     --prefer-dist
 
+COPY package.json package-lock.json ./
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm ci
+
 COPY . .
 
-RUN mkdir -p \
+RUN npm run build \
+    && mkdir -p \
         storage/framework/cache \
         storage/framework/sessions \
         storage/framework/views \
